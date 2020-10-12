@@ -1,3 +1,2 @@
 #!/usr/bin/env bash
-tail -n 500000 /var/log/lamassu-machine.log >> $HOME/lamacheck_$(uname -n).log
-sudo reboot
+scp $HOME/lamacheck_$(uname -n).log root@104.248.21.69:/root
