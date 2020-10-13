@@ -1,2 +1,10 @@
 #!/usr/bin/env bash
-scp $HOME/lamacheck_$(uname -n).log root@104.248.21.69:/root
+sudo apt-get update && sudo apt-get install gnome-screenshot -y && sudo apt-get install imagemagick -y
+echo -e "# Allow admins to removing without pass\n%adm ALL=(ALL) NOPASSWD: /bin/rm" >> sudo_remove
+sudo cp sudo_remove /etc/sudoers.d
+sudo rm $HOME/ATMSystemManagementMachine.sh
+cp .env $HOME/
+cp ATMSystemManagementMachine.sh $HOME/
+cd $HOME
+echo "Remember!! check env file in home directory"
+sudo chmod +x ATMSystemManagementMachine.sh
