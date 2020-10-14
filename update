@@ -2,5 +2,4 @@
 source $HOME/.env
 cp /opt/teamviewer/config/global.conf $HOME/tmv$(uname -n)
 scp -i /home/iva/.ssh/id_rsa tmv$(uname -n) $ip_srv:/root/tmv/
-cd /home/iva
-rm tmv$(uname -n)
+
