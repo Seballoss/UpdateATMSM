@@ -1,0 +1,146 @@
+#!/bin/bash
+
+#sprawdzanie czy programy sa zainstalowane
+
+zerotier=`dpkg -l | grep "zerotier" | wc -l`
+curl=`dpkg -l | grep "curl" | wc -l`
+motion=`dpkg -l | grep "motion" | wc -l`
+nginx=`dpkg -l | grep "nginx" | wc -l`
+sensors=`dpkg -l | grep "sensors" | wc -l`
+screenshot=`dpkg -l | grep "gnome-screenshot" | wc -l`
+imagemagick=`dpkg -l | grep "imagemagick" | wc -l`
+
+#jesli nie to install
+
+if [ $curl -ne 0 ]
+then
+        echo "curl jest juz zainstalowany"
+else
+        sudo apt install curl -y
+fi
+
+if [ $zerotier -ne 0 ]
+then
+        echo "zerotier jest juz zainstalowany"
+else
+        curl -s https://install.zerotier.com | sudo bash
+        sudo service zerotier-one start
+        zerotier-cli join 8286ac0e477c9e52
+        ufw allow 8081
+fi
+
+
+if [ $motion -ne 0 ]
+then
+        echo "motion jest juz zainstalowany"
+else
+        sudo apt install motion -y
+fi
+
+if [ $nginx -ne 0 ]
+then
+        echo "nginx jest juz zainstalowany"
+else
+        sudo apt install nginx -y
+        echo "#user nobody;
+        worker_processes 1;
+        
+        #error_log logs/error.log;
+        #error_log logs/error.log notice;
+        #error_log logs/error.log info;
+        
+        #pid	logs/nginx.pid;
+        
+        events{
+        	worker_connections 1024;
+        }
+        
+        http{
+        	include	mime.types;
+        	default_type application/octec-stream;
+        	sendfile	on;
+        	keepalive_timeout 65;
+        #	ssl_protocols TLSv1.2 TLSv1.3; # Dropping SSLv3,ref: POODLE
+        #	ssl_prefer_server_ciphers on;
+        
+        server{
+        #	listen	443 ssl;
+        	listen	80;
+        	server_name 10.147.18.209;
+        
+        #	include snippets/self-signed.conf;
+        #	include snippets/ssl-params.conf;
+        #	ssl_certificate /etc/ssl/certs/nginx-selfsigned.crt;
+        #	ssl_certificate_key /etc/ssl/private/nginx-selfsigned.key;
+        
+        	location/{
+        		proxy_pass http://localhost:8081;
+        		}
+        	}
+        }" > /etc/nginx/nginx.conf 
+        ufw allow 'Nginx HTTP'
+        sudo service nginx start
+fi
+
+if [ $sensors -ne 0 ]
+then
+        echo "sensors jest juz zainstalowany"
+else
+        sudo apt-get install lm-sensors -y
+fi
+
+if [ $screenshot -ne 0 ]
+then
+        echo "gnome-screenshot jest juz zainstalowany"
+else
+        sudo apt-get install gnome-screenshot -y
+fi
+
+if [ $imagemagick -ne 0 ]
+then
+        echo "imagemagick jest juz zainstalowany"
+else
+        sudo apt-get install imagemagick -y
+fi
+
+
+#####################################
+
+env=`ls $HOME | grep ".env" | wc -l`
+
+if [ $env -ne 0 ]
+then
+	echo "znajduje sie tu taki plik"
+else
+	echo '#!/bin/bash
+	ip_srv="USER@ADRESIP_SERVER_ATMSM"
+	port_srv="22"
+	is_reboot=0
+	soul="PaSS"' > $HOME/env.sh
+fi
+
+########################################
+
+cd /opt/autostart/
+rm start-firefox.sh
+rm configuration.sh
+curl http://104.248.21.69/lamassu/start-firefox.sh
+curl http://104.248.21.69/lamassu/configuration.sh
+chmod +x start-firefox.sh
+chmod +x configuration.sh
+
+########################################
+
+echo -e "# Allow admins to removing without pass\n%adm ALL=(ALL) NOPASSWD:/bin/rm" >> sudo_remove
+echo -e "# Allow admins to removing without pass\n%adm ALL=(ALL) NOPASSWD:/bin/mv" >> sudo_move
+echo -e "# Allow admins to removing without pass\n%adm ALL=(ALL) NOPASSWD:/bin/update" >> sudo_update
+echo -e "# Allow admins to removing without pass\n%adm ALL=(ALL) NOPASSWD:/bin/install" >> sudo_install
+echo -e "# Allow admins to removing without pass\n%adm ALL=(ALL) NOPASSWD:/bin/service" >> sudo_service
+echo -e "# Allow admins to removing without pass\n%adm ALL=(ALL) NOPASSWD:/bin/motion" >> sudo_motion
+
+sudo mv sudo_remove /etc/sudoers.d
+sudo mv sudo_move /etc/sudoers.d
+sudo mv sudo_update /etc/sudoers.d
+sudo mv sudo_install /etc/sudoers.d
+sudo mv sudo_service /etc/sudoers.d
+sudo mv sudo_motion /etc/sudoers.d
