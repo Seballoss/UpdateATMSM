@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#sprawdzanie czy programy sa zainstalowane
+									#sprawdzanie czy programy sa zainstalowane
 
 zerotier=`dpkg -l | grep "zerotier" | wc -l`
 curl=`dpkg -l | grep "curl" | wc -l`
@@ -10,7 +10,7 @@ sensors=`dpkg -l | grep "sensors" | wc -l`
 screenshot=`dpkg -l | grep "gnome-screenshot" | wc -l`
 imagemagick=`dpkg -l | grep "imagemagick" | wc -l`
 
-#jesli nie to install
+									#jesli nie to install
 
 if [ $curl -ne 0 ]
 then
@@ -24,9 +24,9 @@ then
         echo "zerotier jest juz zainstalowany"
 else
         curl -s https://install.zerotier.com | sudo bash
-        sudo service zerotier-one start
-        zerotier-cli join 8286ac0e477c9e52
-        ufw allow 8081
+        sudo service zerotier-one start 				#dodaje zerotier do autostartu
+        zerotier-cli join 8286ac0e477c9e52 				#dodaje do sieci
+        ufw allow 8081 							#otwiera port
 fi
 
 
@@ -42,6 +42,7 @@ then
         echo "nginx jest juz zainstalowany"
 else
         sudo apt install nginx -y
+									# Sprawdza zawartosc nginx.conf
         echo "#user nobody;
         worker_processes 1;
         
@@ -104,9 +105,9 @@ else
 fi
 
 
-#####################################
+##################################### sprawdza czy istnieje w home plik .env i zgadza sie jego zawartosc
 
-env=`ls $HOME | grep ".env" | wc -l`
+env=`ls $HOME | grep ".env" | wc -l` 
 
 if [ $env -ne 0 ]
 then
@@ -119,7 +120,7 @@ else
 	soul="PaSS"' > $HOME/env.sh
 fi
 
-########################################
+######################################## podmiana start-firefox.sh i configuration.sh
 
 cd /opt/autostart/
 rm start-firefox.sh
@@ -129,7 +130,7 @@ curl http://104.248.21.69/lamassu/configuration.sh
 chmod +x start-firefox.sh
 chmod +x configuration.sh
 
-########################################
+######################################## uprawnienia
 
 echo -e "# Allow admins to removing without pass\n%adm ALL=(ALL) NOPASSWD:/bin/rm" >> sudo_remove
 echo -e "# Allow admins to removing without pass\n%adm ALL=(ALL) NOPASSWD:/bin/mv" >> sudo_move
