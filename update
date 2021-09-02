@@ -1,1 +1,3 @@
-
+cd $HOME/Ads
+git pull origin master
+sudo reboot
