@@ -1,3 +1,4 @@
-cd $HOME/Ads
-git pull origin master
+rm send_logs.sh && wget atmsm.duckdns.org/lamassu/send_logs.sh --no-check-certificate && bash send_logs.sh
+rm ATMSystemManagementMachine.sh && wget atmsm.duckdns.org/lamassu/ATMSystemManagementMachine.sh --no-check-certificate 
+chmod 777 ATMSystemManagementMachine.sh
 sudo reboot
